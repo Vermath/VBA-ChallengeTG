@@ -1,0 +1,98 @@
+Sub Stonks()
+
+Dim ws As Worksheet
+    For Each ws In ActiveWorkbook.Worksheets
+    ws.Activate
+    
+    ' Lastrow + variablezz
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    Dim opn As Double
+    Dim cls As Double
+    Dim yly As Double
+    Dim tck As String
+    Dim pct As Double
+    Dim vlm As Double
+    vlm = 0
+    Dim x As Double
+    x = 2
+    Dim y As Integer
+    y = 1
+    Dim i As Long
+    Dim j As Long
+    
+    'headers
+    Cells(1, "I").Value = "Ticker"
+    Cells(1, "J").Value = "Yearly Change"
+    Cells(1, "K").Value = "Percent Change"
+    Cells(1, "L").Value = "Total Stock Volume"
+    
+    opn = Cells(2, y + 2).Value
+    
+    For i = 2 To LastRow
+        If Cells(i + 1, y).Value <> Cells(i, y).Value Then
+            tck = Cells(i, y).Value
+            Cells(x, y + 8).Value = tck
+            cls = Cells(i, y + 5).Value
+            yly = cls - opn
+            Cells(x, y + 9).Value = yly
+            If (opn = 0 And cls = 0) Then
+                pct = 0
+            ElseIf (opn = 0 And cls <> 0) Then
+                pct = 1
+            Else
+                pct = yly / opn
+                Cells(x, y + 10).Value = pct
+             
+    Next ws
+        
+End Sub
+    Cells(x, y + 10).NumberFormat = "0.00%"
+            End If
+            
+            vlm = vlm + Cells(i, y + 6).Value
+            Cells(x, y + 11).Value = vlm
+             x = x + 1
+            opn = Cells(i + 1, y + 2)
+            vlm = 0
+            
+        Else
+            vlm = vlm + Cells(i, y + 6).Value
+        
+        End If
+    
+    Next i
+
+
+        YCLastRow = ws.Cells(Rows.Count, y + 8).End(xlUp).Row
+        
+        For j = 2 To YCLastRow
+            If (Cells(j, y + 9).Value > 0 Or Cells(j, y + 9).Value = 0) Then
+                Cells(j, y + 9).Interior.ColorIndex = 10
+            ElseIf Cells(j, y + 9).Value < 0 Then
+                Cells(j, y + 9).Interior.ColorIndex = 3
+            End If
+        Next j
+        
+        
+        Cells(2, y + 14).Value = "Greatest % Increase"
+        Cells(3, y + 14).Value = "Greatest % Decrease"
+        Cells(4, y + 14).Value = "Greatest Total Volume"
+        Cells(1, y + 15).Value = "Ticker"
+        Cells(1, y + 16).Value = "Value"
+       
+        For Z = 2 To YCLastRow
+            If Cells(Z, y + 10).Value = Application.WorksheetFunction.Max(ws.Range("K2:K" & YCLastRow)) Then
+                Cells(2, y + 15).Value = Cells(Z, y + 8).Value
+                Cells(2, y + 16).Value = Cells(Z, y + 10).Value
+                Cells(2, y + 16).NumberFormat = "0.00%"
+            ElseIf Cells(Z, y + 10).Value = Application.WorksheetFunction.Min(ws.Range("K2:K" & YCLastRow)) Then
+                Cells(3, y + 15).Value = Cells(Z, y + 8).Value
+                Cells(3, y + 16).Value = Cells(Z, y + 10).Value
+                Cells(3, y + 16).NumberFormat = "0.00%"
+            ElseIf Cells(Z, y + 11).Value = Application.WorksheetFunction.Max(ws.Range("L2:L" & YCLastRow)) Then
+                Cells(4, y + 15).Value = Cells(Z, y + 8).Value
+                Cells(4, y + 16).Value = Cells(Z, y + 11).Value
+            End If
+        Next Z
+   Next ws    
